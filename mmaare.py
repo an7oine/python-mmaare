@@ -33,7 +33,7 @@ import sys
 class _Py36:
   '''Python 3.6 -toteutus.
 
-  Periytetään moduulin luokka, lisätään määre.
+  Periytetään moduulin luokka, lisätään datakuvaaja.
   '''
   # pylint: disable=no-member
   def __init__(self, *args, **kwargs):
@@ -55,16 +55,27 @@ class _Py36:
     # def __init__
 
   def __get__(self, obj, cls=None):
-    # Poimitaan olemassaoleva arvo, jos se on asetettu.
+    # Poimitaan mahdollinen olemassaoleva arvo.
     try: return obj.__dict__[self.nimi]
     except KeyError: pass
+    # Haetaan ja asetetaan.
     arvo = super().__get__(obj, cls)
-    # Sijoitus `mappingproxy`-tyyppiseen kontekstisanakirjaan
-    # aiheuttaa poikkeuksen. Ohitetaan arvon asetus.
-    try: obj.__dict__[self.nimi] = arvo
-    except TypeError: pass
+    self.__set__(obj, arvo)
     return arvo
     # def __get__
+
+  # Ohitetaan poikkeukset `mappingproxy`-tyyppisen
+  # kontekstisanakirjan muokkaamiseen liittyen.
+
+  def __set__(self, obj, arvo):
+    try: obj.__dict__[self.nimi] = arvo
+    except TypeError: pass
+    # def __set__
+
+  def __delete__(self, obj):
+    try: del obj.__dict__[self.nimi]
+    except TypeError: pass
+    # def __delete__
 
   # class _Py36
 

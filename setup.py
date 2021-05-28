@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import setuptools
+from setuptools import setup
 
-setuptools._install_setup_requires({'setup_requires': ['git-versiointi']})
-from versiointi import asennustiedot
-
-setuptools.setup(
+setup(
+  setup_requires='git-versiointi',
   name='python-mmaare',
   description='Python-moduulimääretoteutus',
   url='https://github.com/an7oine/python-mmaare.git',
   author='Antti Hautaniemi',
   author_email='antti.hautaniemi@pispalanit.fi',
   py_modules=['mmaare'],
-  **asennustiedot(__file__),
 )

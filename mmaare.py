@@ -132,13 +132,20 @@ class mmaare(
 
   def __new__(cls, *args, **kwargs):
     '''
-    Sallitaan käyttö koristeena kahdella tavalla:
+    Sallitaan käyttö koristeena seuraavilla tavoilla:
 
+    # Tuottaa moduulimääreen nimellä `f`.
     @mmaare
-    def f(m): ...
+    def _f(m): ...
 
+    # Tuottaa moduulimääreen nimellä `def`.
     @mmaare(nimi='def')
     def abc(m): ...
+
+    # Tuottaa moduulimääreen nimellä `g`
+    @mmaare # tai: @mmaare(nimi='g')
+    @staticmethod
+    def _g(): ...
     '''
     if args:
       return super().__new__(cls, *args, **kwargs)
@@ -147,10 +154,15 @@ class mmaare(
     # def __new__
 
   def __init__(self, fget, nimi=None, moduuli=None):
+    if isinstance(fget, staticmethod):
+      # pylint: disable=function-redefined, unused-argument
+      @functools.wraps(fget.__func__)
+      def fget(m):
+        return fget.__wrapped__()
     self.nimi = nimi or fget.__name__.lstrip('_')
     self.moduuli = moduuli or sys.modules[fget.__module__]
     if (self.moduuli.__name__, self.nimi) == (fget.__module__, fget.__name__):
-      raise ValueError('Määrettä ei voida asettaa samalla nimellä: {fget}')
+      raise ValueError(f'Määrettä ei voida asettaa samalla nimellä: {fget}')
     super().__init__(fget)
     # def __init__
 

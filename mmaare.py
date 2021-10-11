@@ -102,11 +102,11 @@ class _Py37:
       if avain in __getattr__.__rekursio__:
         return self._ei_loydy(self.moduuli, avain)
 
+      __getattr__.__rekursio__.add(avain)
       try:
-        __getattr__.__rekursio__.add(avain)
         return __getattr__.__wrapped__(avain)
       finally:
-        __getattr__.__rekursio__.remove(avain)
+        __getattr__.__rekursio__.discard(avain)
       # def __getattr__
     self.moduuli.__getattr__ = functools.wraps(getattr(
       self.moduuli,
@@ -169,7 +169,7 @@ class mmaare(
   # class mmaare
 
 
-# Sallitaan tämän moduulin köyttö sellaisenaan koristeena.
+# Sallitaan tämän moduulin käyttö sellaisenaan koristeena.
 sys.modules[__name__].__class__ = functools.wraps(
   sys.modules[__name__].__class__,
   updated=()

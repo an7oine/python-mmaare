@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(
-  setup_requires='git-versiointi',
+  setup_requires='git-versiointi>=1.6rc3',
   name='python-mmaare',
   description='Python-moduulimääretoteutus',
   url='https://github.com/an7oine/python-mmaare.git',

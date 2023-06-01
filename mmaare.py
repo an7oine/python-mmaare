@@ -28,6 +28,7 @@ Esim.
 
 import functools
 import sys
+import warnings
 
 
 class _Py36:
@@ -108,12 +109,28 @@ class _Py37:
       finally:
         __getattr__.__rekursio__.discard(avain)
       # def __getattr__
-    self.moduuli.__getattr__ = functools.wraps(getattr(
-      self.moduuli,
-      '__getattr__',
-      functools.partial(self._ei_loydy, self.moduuli)
-    ))(__getattr__)
-    __getattr__.__rekursio__ = set()
+
+    try:
+      mod_getattr = self.moduuli.__getattr__
+    except AttributeError:
+      mod_getattr = functools.partial(
+        self._ei_loydy,
+        self.moduuli
+      )
+    try:
+      self.moduuli.__getattr__ = functools.wraps(
+        mod_getattr
+      )(__getattr__)
+    except AttributeError:
+      # Mikäli moduuli ei salli `__getattr__`-
+      # funktion asettamista, ohitetaan.
+      warnings.warn(
+        f'Funktion `{self.moduuli}.__getattr__`'
+        f' asettaminen ei sallittu, ohitetaan.',
+        stacklevel=3,
+      )
+    else:
+      __getattr__.__rekursio__ = set()
     # def __init__
 
   @staticmethod
